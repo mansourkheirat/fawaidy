@@ -1,29 +1,26 @@
 <?php
 /**
  * ==========================================
- * صفحة عرض الفوائد
+ * صفحة عرض جميع الفوائد
  * ==========================================
  * 
  * الملف: content/benefits.php
- * الوصف: صفحة لعرض جميع الفوائد الموجودة في الموقع
+ * الوصف: صفحة لعرض جميع الفوائد المنشورة في الموقع
  * 
  * الميزات الرئيسية:
- * - عرض الفوائد المنشورة
+ * - عرض الفوائد المنشورة فقط
  * - البحث عن الفوائد
  * - تصفية حسب الفئة
  * - ترتيب حسب التاريخ أو الشهرة
  * - تقسيم الصفحات (Pagination)
- * - معلومات الفائدة (المؤلف، التاريخ، الآراء)
+ * - عرض معلومات الفائدة (المؤلف، التاريخ، الآراء)
+ * - عرض الفائدة الكاملة عند الضغط
  * 
  * المتطلبات الأمنية:
  * - عرض الفوائد المنشورة فقط
  * - تصفية آمنة من البيانات
  * - منع SQL Injection
  * - XSS Protection
- * 
- * الصلاحيات:
- * - يمكن لأي شخص عرض الفوائد
- * - الأعضاء المسجلين يمكنهم إضافة للمفضلات
  */
 
 // ==========================================
@@ -46,11 +43,11 @@ if (basename($_SERVER['PHP_SELF']) === basename(__FILE__)) {
 
 // الصفحة الحالية
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-$page = max(1, $page); // التأكد من أن الصفحة >= 1
+$page = max(1, $page);
 
 // البحث
 $search = isset($_GET['q']) ? trim($_GET['q']) : '';
-$search = htmlspecialchars($search); // حماية من XSS
+$search = htmlspecialchars($search);
 
 // الفئة
 $category = isset($_GET['category']) && is_numeric($_GET['category']) ? (int)$_GET['category'] : 0;
@@ -59,6 +56,9 @@ $category = isset($_GET['category']) && is_numeric($_GET['category']) ? (int)$_G
 $sortBy = isset($_GET['sort']) ? trim($_GET['sort']) : 'latest';
 $allowedSorts = ['latest', 'popular', 'trending'];
 $sortBy = in_array($sortBy, $allowedSorts) ? $sortBy : 'latest';
+
+// معرّف الفائدة المختارة (للعرض الكامل)
+$selectedBenefit = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // ==========================================
 // حساب OFFSET للتقسيم
@@ -80,7 +80,7 @@ $countTypes = '';
 // إضافة شرط البحث
 if (!empty($search)) {
     $countQuery .= " AND (title LIKE ? OR content LIKE ?)";
-    $searchPattern = '%' . Security::escapeSql($search) . '%';
+    $searchPattern = '%' . $search . '%';
     $countParams = [$searchPattern, $searchPattern];
     $countTypes = 'ss';
 }
@@ -111,7 +111,7 @@ $dataQuery = "
     SELECT 
         b.id, b.user_id, b.category_id, b.title, b.content, 
         b.tags, b.views_count, b.created_at,
-        u.username, u.full_name, u.avatar,
+        u.username, u.full_name,
         c.name as category_name
     FROM benefits b
     JOIN users u ON b.user_id = u.id
@@ -143,7 +143,7 @@ switch ($sortBy) {
         $dataQuery .= " ORDER BY b.views_count DESC";
         break;
     case 'trending':
-        $dataQuery .= " ORDER BY b.created_at DESC LIMIT 100";
+        $dataQuery .= " ORDER BY b.created_at DESC";
         break;
     case 'latest':
     default:
@@ -163,7 +163,7 @@ $dataTypes .= 'ii';
 // ==========================================
 $dataStmt = db()->prepare($dataQuery);
 if (!empty($dataParams)) {
-    $dataStmt->bind_param($dataTypes, ...$dataParams);
+    $dataStmt->bind_param($dataTypes, ...$countParams);
 }
 $dataStmt->execute();
 $benefitsResult = $dataStmt->get_result();
@@ -171,6 +171,40 @@ $benefitsResult = $dataStmt->get_result();
 $benefits = [];
 while ($benefit = $benefitsResult->fetch_assoc()) {
     $benefits[] = $benefit;
+}
+
+// ==========================================
+// جلب الفائدة الكاملة إذا تم اختيارها
+// ==========================================
+$selectedBenefitData = null;
+if ($selectedBenefit > 0) {
+    $benefitStmt = db()->prepare("
+        SELECT 
+            b.id, b.user_id, b.category_id, b.title, b.content, 
+            b.tags, b.views_count, b.created_at,
+            u.username, u.full_name,
+            c.name as category_name
+        FROM benefits b
+        JOIN users u ON b.user_id = u.id
+        JOIN categories c ON b.category_id = c.id
+        WHERE b.id = ? AND b.status = 'published' AND b.deleted_at IS NULL
+        LIMIT 1
+    ");
+    
+    $benefitStmt->bind_param('i', $selectedBenefit);
+    $benefitStmt->execute();
+    $benefitResult = $benefitStmt->get_result();
+    
+    if ($benefitResult->num_rows > 0) {
+        $selectedBenefitData = $benefitResult->fetch_assoc();
+        
+        // تحديث عدد المشاهدات
+        $updateStmt = db()->prepare("
+            UPDATE benefits SET views_count = views_count + 1 WHERE id = ?
+        ");
+        $updateStmt->bind_param('i', $selectedBenefit);
+        $updateStmt->execute();
+    }
 }
 
 // ==========================================
@@ -187,6 +221,26 @@ $categoriesResult = $categoriesStmt->get_result();
 $categories = [];
 while ($cat = $categoriesResult->fetch_assoc()) {
     $categories[] = $cat;
+}
+
+// ==========================================
+// التحقق من تسجيل الدخول للمفضلة
+// ==========================================
+$isLoggedIn = isset($_SESSION['user_id']);
+$userId = $_SESSION['user_id'] ?? null;
+$userFavorites = [];
+
+if ($isLoggedIn && $userId) {
+    $favStmt = db()->prepare("
+        SELECT benefit_id FROM favorites WHERE user_id = ?
+    ");
+    $favStmt->bind_param('i', $userId);
+    $favStmt->execute();
+    $favResult = $favStmt->get_result();
+    
+    while ($fav = $favResult->fetch_assoc()) {
+        $userFavorites[] = $fav['benefit_id'];
+    }
 }
 
 ?>
@@ -285,9 +339,73 @@ while ($cat = $categoriesResult->fetch_assoc()) {
         </section>
 
         <!-- ==========================================
+             عرض الفائدة الكاملة
+             ========================================== -->
+        <?php if ($selectedBenefitData): ?>
+        <section class="benefit-detail-section">
+            <div class="benefit-detail-card">
+                <div class="benefit-detail-header">
+                    <h2 class="benefit-detail-title">
+                        <?php echo htmlspecialchars($selectedBenefitData['title']); ?>
+                    </h2>
+                    <span class="benefit-detail-category">
+                        <?php echo htmlspecialchars($selectedBenefitData['category_name']); ?>
+                    </span>
+                </div>
+
+                <div class="benefit-detail-meta">
+                    <div class="meta-left">
+                        <span class="meta-author">
+                            بقلم: <a href="<?php echo SITE_URL . htmlspecialchars($selectedBenefitData['username']); ?>">
+                                <?php echo htmlspecialchars($selectedBenefitData['full_name']); ?>
+                            </a>
+                        </span>
+                        <span class="meta-date">
+                            📅 <?php echo date('d/m/Y', strtotime($selectedBenefitData['created_at'])); ?>
+                        </span>
+                    </div>
+                    <div class="meta-right">
+                        <span class="meta-views">
+                            👁️ <?php echo $selectedBenefitData['views_count']; ?> مشاهدة
+                        </span>
+                        <?php if ($isLoggedIn): ?>
+                        <button class="btn-favorite <?php echo in_array($selectedBenefitData['id'], $userFavorites) ? 'active' : ''; ?>" 
+                                data-benefit-id="<?php echo $selectedBenefitData['id']; ?>"
+                                aria-label="إضافة للمفضلة">
+                            ⭐
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="benefit-detail-content">
+                    <?php echo nl2br(htmlspecialchars($selectedBenefitData['content'])); ?>
+                </div>
+
+                <?php if (!empty($selectedBenefitData['tags'])): ?>
+                <div class="benefit-detail-tags">
+                    <?php 
+                    $tags = array_filter(explode(',', $selectedBenefitData['tags']));
+                    foreach ($tags as $tag): 
+                    ?>
+                    <a href="?q=<?php echo urlencode(trim($tag)); ?>" class="tag">
+                        #<?php echo htmlspecialchars(trim($tag)); ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <div class="benefit-detail-actions">
+                    <a href="?" class="btn btn-secondary">← العودة للقائمة</a>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
+
+        <!-- ==========================================
              النتائج والرسائل
              ========================================== -->
-        <?php if ($totalItems > 0): ?>
+        <?php if ($totalItems > 0 && !$selectedBenefitData): ?>
         <section class="results-info">
             <p>
                 تم العثور على <strong><?php echo $totalItems; ?></strong> فائدة
@@ -301,14 +419,14 @@ while ($cat = $categoriesResult->fetch_assoc()) {
         <!-- ==========================================
              شبكة الفوائد
              ========================================== -->
-        <?php if (!empty($benefits)): ?>
+        <?php if (!empty($benefits) && !$selectedBenefitData): ?>
         <section class="benefits-grid-section">
             <div class="benefits-grid">
                 <?php foreach ($benefits as $benefit): ?>
                 <article class="benefit-card">
                     <!-- العنوان -->
                     <h3 class="benefit-title">
-                        <a href="<?php echo SITE_URL; ?>benefit/<?php echo $benefit['id']; ?>">
+                        <a href="?id=<?php echo $benefit['id']; ?>">
                             <?php echo htmlspecialchars($benefit['title']); ?>
                         </a>
                     </h3>
@@ -344,7 +462,7 @@ while ($cat = $categoriesResult->fetch_assoc()) {
                     </div>
 
                     <!-- الزر -->
-                    <a href="<?php echo SITE_URL; ?>benefit/<?php echo $benefit['id']; ?>" class="btn btn-sm btn-outline-primary">
+                    <a href="?id=<?php echo $benefit['id']; ?>" class="btn btn-sm btn-outline-primary">
                         اقرأ المزيد
                     </a>
                 </article>
@@ -395,7 +513,7 @@ while ($cat = $categoriesResult->fetch_assoc()) {
         </section>
         <?php endif; ?>
 
-        <?php else: ?>
+        <?php elseif (empty($benefits) && !$selectedBenefitData): ?>
         <!-- ==========================================
              رسالة عدم وجود نتائج
              ========================================== -->
@@ -403,7 +521,7 @@ while ($cat = $categoriesResult->fetch_assoc()) {
             <div class="no-results-box">
                 <h2>لا توجد فوائد</h2>
                 <p>لم نجد أي فوائد تطابق بحثك</p>
-                <a href="?page=1" class="btn btn-primary">عرض جميع الفوائد</a>
+                <a href="?" class="btn btn-primary">عرض جميع الفوائد</a>
             </div>
         </section>
         <?php endif; ?>
