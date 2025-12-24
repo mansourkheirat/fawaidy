@@ -1,0 +1,468 @@
+/**
+ * ملف التجاوب مع الأجهزة المختلفة
+ * يضمن عرض الموقع بشكل صحيح على جميع الشاشات
+ */
+
+/* ================================
+   الشاشات الكبيرة جداً (Desktop XXL)
+   ================================ */
+   @media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+    
+    body {
+        font-size: 18px;
+    }
+}
+
+/* ================================
+   الشاشات الكبيرة (Desktop)
+   ================================ */
+@media (max-width: 1199px) {
+    .container {
+        max-width: 960px;
+    }
+    
+    h1 {
+        font-size: 28px;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
+}
+
+/* ================================
+   الشاشات المتوسطة (Tablet)
+   ================================ */
+@media (max-width: 992px) {
+    .container {
+        max-width: 720px;
+    }
+    
+    main {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    h2 {
+        font-size: 20px;
+    }
+    
+    h3 {
+        font-size: 18px;
+    }
+    
+    .welcome-card {
+        flex-direction: column;
+    }
+    
+    .welcome-right,
+    .welcome-left {
+        width: 100%;
+    }
+    
+    .welcome-left {
+        min-height: 250px;
+    }
+    
+    /* تقليل الفجوات */
+    :root {
+        --spacing-lg: 20px;
+        --spacing-xl: 24px;
+    }
+}
+
+/* ================================
+   الشاشات الصغيرة (Small Tablet)
+   ================================ */
+@media (max-width: 768px) {
+    .container {
+        max-width: 540px;
+    }
+    
+    main {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+        padding-top: var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+    }
+    
+    :root {
+        --font-size-base: 15px;
+        --font-size-large: 16px;
+        --font-size-xl: 20px;
+        --spacing-lg: 16px;
+        --spacing-xl: 20px;
+    }
+    
+    h1 {
+        font-size: 22px;
+    }
+    
+    h2 {
+        font-size: 18px;
+    }
+    
+    h3 {
+        font-size: 16px;
+    }
+    
+    /* تخفيف الهامش السفلي للعناصر */
+    section {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    /* تعديل الشريط العلوي */
+    .main-header {
+        height: 50px;
+    }
+    
+    .header-container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .date-section {
+        border-left: none;
+        padding-left: 0;
+        gap: var(--spacing-sm);
+    }
+    
+    .day-name {
+        font-size: var(--font-size-base);
+        min-width: auto;
+    }
+    
+    .dates {
+        font-size: 11px;
+    }
+    
+    /* تخفيف فجوات النماذج */
+    input,
+    textarea,
+    select,
+    button {
+        font-size: 16px; /* تجنب التكبير التلقائي في iOS */
+    }
+    
+    /* تعديل البطاقات */
+    .card {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* تعديل الأزرار */
+    .btn {
+        padding: var(--spacing-md) var(--spacing-md);
+        font-size: var(--font-size-small);
+    }
+    
+    .btn-lg {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-base);
+    }
+    
+    /* الشبكات */
+    .grid-3,
+    .benefits-grid,
+    .articles-grid,
+    .categories-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    /* الجداول */
+    table {
+        font-size: var(--font-size-small);
+    }
+    
+    th, td {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* ================================
+   الهواتف الذكية الصغيرة (Mobile)
+   ================================ */
+@media (max-width: 576px) {
+    .container {
+        max-width: 100%;
+    }
+    
+    main {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+    }
+    
+    :root {
+        --font-size-base: 14px;
+        --font-size-small: 12px;
+        --font-size-large: 16px;
+        --font-size-xl: 18px;
+        --spacing-md: 12px;
+        --spacing-lg: 12px;
+        --spacing-xl: 16px;
+    }
+    
+    body {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: 20px;
+    }
+    
+    h2 {
+        font-size: 16px;
+    }
+    
+    h3 {
+        font-size: 14px;
+    }
+    
+    /* الشريط العلوي */
+    .main-header {
+        height: 45px;
+    }
+    
+    .header-container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .header-center {
+        margin: 0 var(--spacing-sm);
+    }
+    
+    .logo {
+        gap: var(--spacing-xs);
+    }
+    
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .logo-text {
+        font-size: var(--font-size-base);
+    }
+    
+    .header-nav {
+        gap: var(--spacing-xs);
+        padding-left: var(--spacing-sm);
+    }
+    
+    .nav-link {
+        padding: var(--spacing-sm) var(--spacing-xs);
+    }
+    
+    .nav-text {
+        display: none;
+    }
+    
+    /* الشبكات */
+    .grid-2,
+    .grid-3,
+    .grid-4,
+    .benefits-grid,
+    .articles-grid,
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* البطاقات */
+    .welcome-card {
+        padding: var(--spacing-md);
+    }
+    
+    .welcome-title {
+        font-size: 18px;
+    }
+    
+    .welcome-subtitle {
+        font-size: 14px;
+    }
+    
+    /* الأزرار */
+    .btn {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-small);
+        width: 100%;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+    }
+    
+    /* الجداول */
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+    
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    td {
+        position: relative;
+        padding-right: 50%;
+        text-align: left;
+    }
+    
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: var(--spacing-md);
+        font-weight: var(--font-weight-bold);
+        width: 45%;
+    }
+    
+    /* النماذج */
+    input,
+    textarea,
+    select {
+        width: 100%;
+    }
+    
+    /* الفراغات */
+    section {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .mb-3 { margin-bottom: var(--spacing-md); }
+    .mt-3 { margin-top: var(--spacing-md); }
+    .p-3 { padding: var(--spacing-md); }
+}
+
+/* ================================
+   الهواتف الذكية الجداً الصغيرة (iPhone SE)
+   ================================ */
+@media (max-width: 375px) {
+    :root {
+        --font-size-base: 13px;
+        --font-size-small: 11px;
+        --spacing-md: 8px;
+        --spacing-lg: 8px;
+    }
+    
+    h1 {
+        font-size: 18px;
+    }
+    
+    h2 {
+        font-size: 16px;
+    }
+    
+    main {
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
+    }
+    
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .btn {
+        font-size: 12px;
+        padding: var(--spacing-sm);
+    }
+}
+
+/* ================================
+   الطابعات
+   ================================ */
+@media print {
+    .main-header,
+    .main-footer,
+    .sidebar,
+    .navigation,
+    .btn,
+    button {
+        display: none !important;
+    }
+    
+    main {
+        padding: 0;
+        min-height: auto;
+    }
+    
+    body {
+        color: #000;
+        background: #fff;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
+}
+
+/* ================================
+   الوضع المظلم (Dark Mode)
+   ================================ */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-white: #1a1a1a;
+        --color-gray-light: #2a2a2a;
+        --color-gray-medium: #3a3a3a;
+        --color-gray-dark: #aaa;
+    }
+    
+    body {
+        background-color: var(--color-dark);
+        color: #ccc;
+    }
+    
+    a {
+        color: #66b3ff;
+    }
+}
+
+/* ================================
+   دعم Landscape و Portrait
+   ================================ */
+@media (orientation: landscape) and (max-height: 600px) {
+    .main-header {
+        height: 45px;
+    }
+    
+    main {
+        padding-top: 60px;
+    }
+}
+
+/* ================================
+   شاشات اللمس (Touch Devices)
+   ================================ */
+@media (hover: none) and (pointer: coarse) {
+    button,
+    a,
+    .btn {
+        padding: var(--spacing-md);
+        min-height: 44px; /* معيار أبل وجوجل */
+        min-width: 44px;
+    }
+    
+    /* إزالة تأثيرات الـ hover */
+    a:hover {
+        color: inherit;
+    }
+    
+    button:hover {
+        background-color: inherit;
+    }
+}

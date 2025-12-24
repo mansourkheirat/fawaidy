@@ -1,0 +1,398 @@
+/**
+ * ==========================================
+ * ملف تصميم الملف الشخصي
+ * ==========================================
+ * 
+ * المحتوى:
+ * - بطاقة الملف الشخصي الرئيسية
+ * - صورة الملف الشخصي والمعلومات
+ * - الإحصائيات والشارات
+ * - البيانات الشخصية
+ * - أقسام المعلومات
+ * - الشبكات والبطاقات
+ */
+
+/* ==========================================
+   قسم رأس الملف الشخصي
+   ========================================== */
+   .profile-header-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.profile-header-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-accent) 100%);
+    color: var(--color-white);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ==========================================
+   حاوية صورة الملف الشخصي
+   ========================================== */
+.profile-avatar-container {
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-initials {
+    font-weight: var(--font-weight-bold);
+}
+
+/* ==========================================
+   معلومات الملف الشخصي
+   ========================================== */
+.profile-info-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.profile-full-name {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    color: var(--color-white);
+}
+
+.profile-username {
+    font-size: var(--font-size-large);
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+/* ==========================================
+   شارة الرتبة
+   ========================================== */
+.profile-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-md);
+    color: var(--color-white);
+    font-weight: var(--font-weight-bold);
+    width: fit-content;
+}
+
+.badge-icon {
+    font-size: 20px;
+}
+
+.badge-text {
+    font-size: var(--font-size-base);
+}
+
+/* ==========================================
+   النبذة
+   ========================================== */
+.profile-bio {
+    font-size: var(--font-size-base);
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 500px;
+}
+
+/* ==========================================
+   الإحصائيات
+   ========================================== */
+.profile-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.stat-number {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+}
+
+.stat-label {
+    font-size: var(--font-size-small);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ==========================================
+   الأقسام العامة
+   ========================================== */
+.profile-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-dark);
+    margin: 0;
+}
+
+.view-all-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: color var(--transition-fast);
+}
+
+.view-all-link:hover {
+    color: var(--color-dark);
+    text-decoration: underline;
+}
+
+/* ==========================================
+   شبكة البيانات الشخصية
+   ========================================== */
+.profile-data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.profile-data-item {
+    background-color: var(--color-gray-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    border-right: 4px solid var(--color-accent);
+}
+
+.data-label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-value {
+    display: block;
+    font-size: var(--font-size-base);
+    color: var(--color-dark);
+    font-weight: var(--font-weight-medium);
+}
+
+/* ==========================================
+   الشبكات (البطاقات)
+   ========================================== */
+.benefits-grid,
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.benefit-card,
+.article-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.benefit-card:hover,
+.article-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.benefit-title,
+.article-title {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-dark);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.4;
+    min-height: 50px;
+}
+
+.benefit-content,
+.article-content {
+    flex: 1;
+    font-size: var(--font-size-base);
+    color: var(--color-gray-dark);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.benefit-meta,
+.article-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) 0;
+    border-top: 1px solid var(--color-gray-medium);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-small);
+}
+
+.benefit-views,
+.article-views {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+}
+
+.benefit-date,
+.article-date {
+    color: var(--color-gray);
+}
+
+.benefit-card .btn,
+.article-card .btn {
+    align-self: flex-start;
+}
+
+/* ==========================================
+   التجاوب مع الأجهزة الصغيرة
+   ========================================== */
+@media (max-width: 992px) {
+    .profile-header-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-info-container {
+        align-items: center;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        font-size: 48px;
+    }
+
+    .profile-stats {
+        justify-content: center;
+    }
+
+    .view-all-link {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-header-card {
+        padding: var(--spacing-lg);
+    }
+
+    .profile-full-name {
+        font-size: var(--font-size-xl);
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+    }
+
+    .profile-data-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .benefits-grid,
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+
+    .section-title {
+        font-size: var(--font-size-large);
+    }
+
+    .profile-stats {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-header-card {
+        padding: var(--spacing-md);
+    }
+
+    .profile-full-name {
+        font-size: var(--font-size-large);
+    }
+
+    .profile-username {
+        font-size: var(--font-size-base);
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+
+    .profile-stats {
+        gap: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        margin-top: var(--spacing-md);
+    }
+
+    .stat-number {
+        font-size: var(--font-size-large);
+    }
+
+    .profile-role-badge {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .benefits-grid,
+    .articles-grid {
+        gap: var(--spacing-md);
+    }
+}
